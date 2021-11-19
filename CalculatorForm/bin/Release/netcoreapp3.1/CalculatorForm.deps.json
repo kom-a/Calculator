@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "CalculatorForm/1.0.0": {
+        "dependencies": {
+          "Calculator": "1.0.0"
+        },
+        "runtime": {
+          "CalculatorForm.dll": {}
+        }
+      },
+      "Calculator/1.0.0": {
+        "runtime": {
+          "Calculator.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CalculatorForm/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Calculator/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
