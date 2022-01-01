@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
@@ -10,16 +11,27 @@ namespace CalculatorForm
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private Calculator _calculator = new Calculator();
+        private string _expression = "";
+
+        public static RoutedCommand MyCommand = new RoutedCommand();
+
+        private IHistoryStorage _historyStorage;
+        private ObservableCollection<HElement> _history;
+        private bool _showHistory = false;
+        
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private Calculator _calculator = new Calculator();
-        private string _expression = "";
-
-        public static RoutedCommand MyCommand = new RoutedCommand();
+        public MainViewModel(IHistoryStorage historyStorage)
+        {
+            _historyStorage = historyStorage;
+            _history = new ObservableCollection<HElement>();
+        }
 
         public string Expression
         {
@@ -31,6 +43,27 @@ namespace CalculatorForm
             }
         }
 
+        public ObservableCollection<HElement> History
+        {
+            get { return _history; }
+            set
+            {
+                _history = value;
+                OnPropertyChanged(nameof(History));
+            }
+        }
+
+        public bool ShowHistory
+        {
+            get { return _showHistory; }
+            set
+            {
+                _showHistory = value;
+                OnPropertyChanged(nameof(ShowHistory));
+            }
+        }
+
+
         public void ProcessInput(object obj)
         {
             string param = obj as string;
@@ -39,7 +72,11 @@ namespace CalculatorForm
             {
                 try
                 {
-                    Expression = _calculator.Calculate(_expression).ToString();
+                    double result = _calculator.Calculate(_expression);
+                    HElement historyElement = new HElement(Expression, result.ToString());
+                    History.Add(historyElement);
+                    _historyStorage.Write(_history, historyElement);
+                    Expression = result.ToString();
                 } catch(Exception e)
                 {
                     Expression = "Error";
@@ -61,16 +98,6 @@ namespace CalculatorForm
             }
         }
 
-        public void TestHelloWorld(object obj)
-        {
-            Debug.WriteLine("Test: Hello world!");
-        }
-
-        private void MyCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            Debug.WriteLine("MyCommandExecuted: Hello world!");
-        }
-
         public ICommand InputCommand
         {
             get
@@ -78,9 +105,5 @@ namespace CalculatorForm
                 return new RelayCommand(new Action<object>(ProcessInput));
             }
         }
-
-        //public ICommand KeyboardInputCommand
-        //{
-        //}
     }
 }

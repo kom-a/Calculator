@@ -30,6 +30,7 @@
 
         <KeyBinding Key="OemComma" CommandParameter="," Command="{Binding InputCommand}"></KeyBinding>
         <KeyBinding Key="Backspace" CommandParameter="B" Command="{Binding InputCommand}"></KeyBinding>
+        <KeyBinding Key="C" CommandParameter="C" Command="{Binding InputCommand}"></KeyBinding>
     </Window.InputBindings>
 
     <Window.Resources>
@@ -50,15 +51,16 @@
             <Setter Property="Background" Value="LightBlue"></Setter>
         </Style>
 
+        <Style TargetType="ToggleButton" x:Key="HistoryToggleButton">
+            <Setter Property="Background" Value="LightGray"></Setter>
+            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="Background" Value="LightBlue"></Setter>
+        </Style>
+
         <Style TargetType="TextBox">
             <Setter Property="Background" Value="WhiteSmoke"/>
         </Style>
     </Window.Resources>
-
-    <Window.DataContext>
-        <local:MainViewModel/>
-    </Window.DataContext>
-
     <DockPanel>
         <TextBox 
             FontSize="64" 
@@ -68,9 +70,8 @@
             BorderBrush="AliceBlue" 
             Text="{Binding Expression}"
             IsReadOnly="True">
-            
         </TextBox>
-
+        <ToggleButton DockPanel.Dock="Top" Name="historyButton" Style="{StaticResource HistoryToggleButton}" IsChecked="{Binding ShowHistory}">History</ToggleButton>
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -108,6 +109,30 @@
 
             <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource Digits}" Command="{Binding InputCommand}" CommandParameter=",">,</Button>
             <Button Grid.Row="4" Grid.Column="0" Style="{StaticResource Digits}" Command="{Binding InputCommand}" CommandParameter="B">⌫</Button>
+
+            <ListView Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Grid.ColumnSpan="4" Name="History" ItemsSource="{Binding History}">
+                <ListView.Style>
+                    <Style TargetType="ListView">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=historyButton, Path=IsChecked}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.Style>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding Expression}">Expression</GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding Answer}">Value</GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
         </Grid>
+
+        
+
     </DockPanel>
+    
 </Window>

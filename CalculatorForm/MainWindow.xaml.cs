@@ -25,12 +25,9 @@ namespace CalculatorForm
     {
         public MainWindow()
         {
-            InitializeComponent();   
-        }
-       
-        private void OnButtonKeyDown(object sender, KeyEventArgs e)
-        {
-            Debug.WriteLine("Hello world!");
+            InitializeComponent();
+
+            DataContext = new MainViewModel(new FileHistoryStorage());
         }
     }
 }

@@ -19,6 +19,6 @@ C:\Users\kamil\source\repos\Calculator\CalculatorForm\obj\Debug\netcoreapp3.1\Ca
 C:\Users\kamil\source\repos\Calculator\CalculatorForm\obj\Debug\netcoreapp3.1\CalculatorForm.genruntimeconfig.cache
 C:\Users\kamil\source\repos\Calculator\CalculatorForm\bin\Debug\netcoreapp3.1\Calculator.pdb
 C:\Users\kamil\source\repos\Calculator\CalculatorForm\obj\Debug\netcoreapp3.1\CalculatorForm.csproj.CopyComplete
-C:\Users\kamil\source\repos\Calculator\CalculatorForm\obj\Debug\netcoreapp3.1\GeneratedInternalTypeHelper.g.cs
 C:\Users\kamil\source\repos\Calculator\CalculatorForm\bin\Debug\netcoreapp3.1\Calculator.dll
 C:\Users\kamil\source\repos\Calculator\CalculatorForm\bin\Debug\netcoreapp3.1\Calculator.dll.config
+C:\Users\kamil\source\repos\Calculator\CalculatorForm\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
