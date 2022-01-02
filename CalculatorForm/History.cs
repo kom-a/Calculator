@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace CalculatorForm
 {
@@ -62,59 +62,70 @@ namespace CalculatorForm
     {
         public void Read(ObservableCollection<HElement> hElements)
         {
-            string fileName = "history.json";
-            string path = Path.Combine(Environment.CurrentDirectory, fileName);
-
-            using (StreamReader sr = File.OpenText(path))
+            string historyFilename = "./history.json";
+            if (!File.Exists(historyFilename))
             {
-                string s;
-                while ((s = sr.ReadLine()) != null)
-                {
-                    hElements.Add(JsonSerializer.Deserialize<HElement>(s));
-                }
+                File.Create(historyFilename);
+            }
+
+            foreach (string line in System.IO.File.ReadLines(historyFilename))
+            {
+                HElement element = JsonConvert.DeserializeObject<HElement>(line);
+                hElements.Add(element);
             }
         }
 
         public void Write(ObservableCollection<HElement> hElements, HElement hElement)
         {
-            string fileName = "history.json";
-            string path = Path.Combine(Environment.CurrentDirectory, fileName);
-
-            using (StreamWriter sw = new StreamWriter(path, true))
+            string historyFilename = "./history.json";
+            if (!File.Exists(historyFilename))
             {
-                sw.WriteLine(JsonSerializer.Serialize(hElement));
+                File.Create(historyFilename);
+            }
+
+            using (StreamWriter sw = File.AppendText(historyFilename))
+            {
+                sw.WriteLine(JsonConvert.SerializeObject(hElement));
             }
         }
     }
 
-    //class dbHistoryStorage : IHistoryStorage
-    //{
-    //    public void Read(ObservableCollection<HElement> hElements)
-    //    {
-    //        using (var connection =
-    //            new System.Data.SQLite.SQLiteConnection("Data Source=C:\\Programming\\SQLiteStudio\\HistoryDataBase"))
-    //        {
-    //            connection.Open();
-    //            var result = connection.Query<HElement>("select * from HistoryDataTable");
+    class DatabaseHistoryStorage : IHistoryStorage
+    {
+        public void Read(ObservableCollection<HElement> hElements)
+        {
+            using (var connection =
+                new System.Data.SQLite.SQLiteConnection("Data Source=C:\\Users\\kamil\\source\\repos\\Calculator\\CalculatorForm\\historyDB.db"))
+            {
+                connection.Open();
 
-    //            foreach (var element in result)
-    //            {
-    //                hElements.Add(element);
-    //            }
-    //        }
-    //    }
+                var command = connection.CreateCommand();
+                command.CommandText = "select * from historyTable";
+                var reader = command.ExecuteReader();
 
-    //    public void Write(ObservableCollection<HElement> hElements, HElement hElement)
-    //    {
-    //        using (var connection =
-    //            new System.Data.SQLite.SQLiteConnection("Data Source=C:\\Programming\\SQLiteStudio\\HistoryDataBase"))
-    //        {
-    //            connection.Open();
-    //            var command = connection.CreateCommand();
-    //            command.CommandText = "Insert into HistoryDataTable (Equation, Answer) values ('" + hElement.Equation.ToString() + "', '"
-    //                                  + hElement.Answer.ToString() + "')";
-    //            command.ExecuteReader();
-    //        }
-    //    }
-    //}
+                while(reader.Read())
+                {
+                    string expression = Convert.ToString(reader["expression"]);
+                    string answer = Convert.ToString(reader["answer"]);
+                    hElements.Add(new HElement(expression, answer));
+                }
+
+            }
+        }
+
+        public void Write(ObservableCollection<HElement> hElements, HElement hElement)
+        {
+            using (var connection =
+                new System.Data.SQLite.SQLiteConnection("Data Source=C:\\Users\\kamil\\source\\repos\\Calculator\\CalculatorForm\\historyDB.db"))
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                string expression = hElement.Expression;
+                string answer = hElement.Answer;
+                command.CommandText = "Insert into historyTable (expression, answer) values ('" + expression + "', '"
+                                      + answer + "')";
+                command.ExecuteReader();
+            }
+        }
+    }
 }
